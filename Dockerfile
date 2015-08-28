@@ -11,6 +11,11 @@ deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe m
 deb http://security.ubuntu.com/ubuntu trusty-security main restricted universe multiverse \n\
 "> /etc/apt/sources.list
 
+# Add PPAs
+# Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+
 # no Upstart or DBus
 # https://github.com/dotcloud/docker/issues/1724#issuecomment-26294856
 RUN apt-mark hold initscripts udev plymouth mountall
@@ -27,6 +32,7 @@ RUN apt-get install -y --force-yes --no-install-recommends supervisor \
         gtk2-engines-murrine ttf-ubuntu-font-family \
         libreoffice firefox \
         xserver-xorg-video-dummy \
+        google-chrome-stable \
     && apt-get autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
@@ -70,10 +76,14 @@ RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-sel
 #
 RUN apt-get install -y --force-yes oracle-java8-installer
 RUN apt-get install -y --force-yes oracle-java8-set-default
-#
+
 # eclipse IDE
 RUN apt-get install -y desktop-file-utils
 RUN apt-get install -y eclipse
+#
+# PHPStorm
+RUN wget https://download.jetbrains.com/webide/PhpStorm-9.0.2.tar.gz
+RUN tar xvvzf PhpStorm-*.tar.gz
 ############ end Eclipse stuff ###############
 
 # noVNC
